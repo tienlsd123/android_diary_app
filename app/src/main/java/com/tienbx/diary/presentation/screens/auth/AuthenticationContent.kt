@@ -49,9 +49,11 @@ fun AuthenticationContent(
                     fontSize = MaterialTheme.typography.bodyMedium.fontSize
                 )
             }
-            Column(modifier = Modifier.weight(weight = 2f), verticalArrangement = Arrangement.Bottom) {
+            Column(
+                modifier = Modifier.weight(weight = 2f),
+                verticalArrangement = Arrangement.Bottom
+            ) {
                 GoogleButton(loadingState = loadingState, onClick = onButtonClick)
-
             }
         }
     }

@@ -18,7 +18,7 @@ class MainActivity : ComponentActivity() {
         installSplashScreen()
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
-            DiaryAppTheme {
+            DiaryAppTheme(dynamicColor = false) {
                 val navController = rememberNavController()
                 SetupNavGraph(startDestination = getStartDestination(), navHostController = navController)
             }

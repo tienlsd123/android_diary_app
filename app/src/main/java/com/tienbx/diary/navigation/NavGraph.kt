@@ -21,6 +21,7 @@ import com.stevdzasan.messagebar.rememberMessageBarState
 import com.stevdzasan.onetap.rememberOneTapSignInState
 import com.tienbx.diary.presentation.screens.auth.AuthenticationScreen
 import com.tienbx.diary.presentation.screens.auth.AuthenticationViewModel
+import com.tienbx.diary.presentation.screens.home.HomeScreen
 import com.tienbx.diary.util.Constants
 import io.realm.kotlin.mongodb.App
 import kotlinx.coroutines.Dispatchers
@@ -34,7 +35,9 @@ fun SetupNavGraph(startDestination: String, navHostController: NavHostController
             navHostController.popBackStack()
             navHostController.navigate(Screen.Home.route)
         })
-        homeRoute()
+        homeRoute(navigateToWrite = {
+            navHostController.navigate(Screen.Write.route)
+        })
         writeRoute()
     }
 }
@@ -74,20 +77,14 @@ fun NavGraphBuilder.authenticationRoute(navigateToHome: () -> Unit) {
     }
 }
 
-fun NavGraphBuilder.homeRoute() {
+fun NavGraphBuilder.homeRoute(navigateToWrite: () -> Unit) {
     composable(route = Screen.Home.route) {
-        val scope = rememberCoroutineScope()
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Button(onClick = { scope.launch(Dispatchers.IO) { App.create(Constants.APP_ID).currentUser?.logOut() } }) {
-                Text(
-                    text = "Logout"
-                )
-            }
-        }
+        HomeScreen(
+            onMenuClicked = {
+
+            },
+            navigateToWrite = navigateToWrite
+        )
     }
 }
 

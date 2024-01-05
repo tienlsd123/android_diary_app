@@ -3,6 +3,7 @@ package com.tienbx.diary.presentation.screens.home
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -28,6 +29,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.tienbx.diary.R
+import com.tienbx.diary.model.Diary
+import com.tienbx.diary.model.Mood
+import com.tienbx.diary.presentation.component.DiaryHolder
+import io.realm.kotlin.ext.realmListOf
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -53,6 +58,37 @@ fun HomeScreen(
             },
             content = {
 
+                Column (modifier = Modifier.padding(20.dp)){
+                    Spacer(modifier = Modifier.height(20.dp))
+                    DiaryHolder(diary = Diary().apply {
+                        title = "My diary"
+                        description =
+                            "Lorem Ipsum is simply dummy text of the printing and typesetting industry. " +
+                                    "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, " +
+                                    "when an unknown printer took a galley of type and scrambled it to make a type specimen book."
+                        mood = Mood.Happy.name
+                        images = realmListOf(
+                            "https://images.unsplash.com/photo-1682687220801-eef408f95d71?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                            "https://images.unsplash.com/photo-1701743806568-4ce6e19500c1?q=80&w=2572&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                            "https://images.unsplash.com/photo-1704426882813-8acfff020487?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                        )
+                    }, onclick = {})
+
+                    Spacer(modifier = Modifier.height(20.dp))
+                    DiaryHolder(diary = Diary().apply {
+                        title = "My diary"
+                        description =
+                            "Lorem Ipsum is simply dummy text of the printing and typesetting industry. " +
+                                    "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, " +
+                                    "when an unknown printer took a galley of type and scrambled it to make a type specimen book."
+                        mood = Mood.Happy.name
+                        images = realmListOf(
+                            "https://images.unsplash.com/photo-1682687220801-eef408f95d71?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                            "https://images.unsplash.com/photo-1701743806568-4ce6e19500c1?q=80&w=2572&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                            "https://images.unsplash.com/photo-1704426882813-8acfff020487?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                        )
+                    }, onclick = {})
+                }
             }
         )
     }

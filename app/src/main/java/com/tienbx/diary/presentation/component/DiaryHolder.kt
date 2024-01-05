@@ -1,5 +1,6 @@
 package com.tienbx.diary.presentation.component
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -17,6 +18,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Shapes
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,7 +32,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.tienbx.diary.model.Diary
 import com.tienbx.diary.model.Mood
@@ -47,6 +48,7 @@ fun DiaryHolder(
 ) {
     val localDensity = LocalDensity.current
     var componentHeight by remember { mutableStateOf(0.dp) }
+    var galleryOpened by remember { mutableStateOf(false) }
 
     Row(
         modifier = Modifier.clickable(
@@ -80,6 +82,17 @@ fun DiaryHolder(
                     maxLines = 4,
                     overflow = TextOverflow.Ellipsis
                 )
+                if (diary.images.isNotEmpty()) {
+                    ShowGalleryButton(
+                        galleryOpened = galleryOpened,
+                        onclick = { galleryOpened = !galleryOpened }
+                    )
+                }
+                AnimatedVisibility(visible = galleryOpened) {
+                    Column(modifier = Modifier.padding(all = 14.dp)) {
+                        Gallery(images = diary.images)
+                    }
+                }
             }
         }
     }
@@ -114,19 +127,20 @@ fun DiaryHeader(moodName: String, time: Instant) {
             color = mood.contentColor,
             style = TextStyle(fontSize = MaterialTheme.typography.bodyMedium.fontSize)
         )
-
     }
 }
 
-@Preview
 @Composable
-fun DiaryHolderPreview() {
-    DiaryHolder(diary = Diary().apply {
-        title = "My diary"
-        description =
-            "Lorem Ipsum is simply dummy text of the printing and typesetting industry. " +
-                    "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, " +
-                    "when an unknown printer took a galley of type and scrambled it to make a type specimen book."
-        mood = Mood.Happy.name
-    }, onclick = {})
+fun ShowGalleryButton(
+    galleryOpened: Boolean,
+    onclick: () -> Unit,
+
+    ) {
+    TextButton(onClick = onclick) {
+        Text(
+            text = if (galleryOpened) "Hide Gallery" else "Show Gallery",
+            style = TextStyle(fontSize = MaterialTheme.typography.bodySmall.fontSize)
+        )
+    }
 }
+

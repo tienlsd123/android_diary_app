@@ -3,16 +3,18 @@ package com.tienbx.diary.presentation.screens.home
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -20,28 +22,33 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
-import androidx.compose.material3.NavigationDrawerItemColors
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.tienbx.diary.R
-import com.tienbx.diary.model.Diary
-import com.tienbx.diary.model.Mood
-import com.tienbx.diary.presentation.component.DiaryHolder
-import io.realm.kotlin.ext.realmListOf
+import com.tienbx.diary.data.repository.Diaries
+import com.tienbx.diary.util.RequestState
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun HomeScreen(
+    diaries: Diaries,
     drawerState: DrawerState,
     onMenuClicked: () -> Unit,
     onSignOutClicked: () -> Unit,
     navigateToWrite: () -> Unit
 ) {
+    var padding by remember { mutableStateOf(PaddingValues()) }
+
     NavigationDrawer(
         drawerState = drawerState,
         onSignOutClicked = onSignOutClicked
@@ -49,7 +56,10 @@ fun HomeScreen(
         Scaffold(
             topBar = { HomeTopBar(onMenuClicked = onMenuClicked) },
             floatingActionButton = {
-                FloatingActionButton(onClick = navigateToWrite) {
+                FloatingActionButton(
+                    modifier = Modifier.padding(end = padding.calculateEndPadding(LayoutDirection.Ltr)),
+                    onClick = navigateToWrite
+                ) {
                     Icon(
                         imageVector = Icons.Default.Edit,
                         contentDescription = "New Diary Icon"
@@ -57,42 +67,29 @@ fun HomeScreen(
                 }
             },
             content = {
+                padding = it
+                when (diaries) {
+                    RequestState.Loading -> Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) { CircularProgressIndicator() }
 
-                Column (modifier = Modifier.padding(20.dp)){
-                    Spacer(modifier = Modifier.height(20.dp))
-                    DiaryHolder(diary = Diary().apply {
-                        title = "My diary"
-                        description =
-                            "Lorem Ipsum is simply dummy text of the printing and typesetting industry. " +
-                                    "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, " +
-                                    "when an unknown printer took a galley of type and scrambled it to make a type specimen book."
-                        mood = Mood.Happy.name
-                        images = realmListOf(
-                            "https://images.unsplash.com/photo-1682687220801-eef408f95d71?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-                            "https://images.unsplash.com/photo-1701743806568-4ce6e19500c1?q=80&w=2572&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-                            "https://images.unsplash.com/photo-1704426882813-8acfff020487?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                    is RequestState.Success -> {
+                        HomeContent(
+                            paddingValues = it,
+                            diariesNotes = diaries.data,
+                            onClick = {}
                         )
-                    }, onclick = {})
+                    }
 
-                    Spacer(modifier = Modifier.height(20.dp))
-                    DiaryHolder(diary = Diary().apply {
-                        title = "My diary"
-                        description =
-                            "Lorem Ipsum is simply dummy text of the printing and typesetting industry. " +
-                                    "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, " +
-                                    "when an unknown printer took a galley of type and scrambled it to make a type specimen book."
-                        mood = Mood.Happy.name
-                        images = realmListOf(
-                            "https://images.unsplash.com/photo-1682687220801-eef408f95d71?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-                            "https://images.unsplash.com/photo-1701743806568-4ce6e19500c1?q=80&w=2572&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-                            "https://images.unsplash.com/photo-1704426882813-8acfff020487?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-                        )
-                    }, onclick = {})
+                    is RequestState.Error -> EmptyPage(title = "Error", subtitle = "${diaries.error.message}")
+                    else -> {}
                 }
             }
         )
     }
 }
+
 
 @Composable
 fun NavigationDrawer(
@@ -102,15 +99,13 @@ fun NavigationDrawer(
 ) {
     ModalNavigationDrawer(
         drawerContent = {
-            ModalDrawerSheet {
+            ModalDrawerSheet(modifier = Modifier.width(250.dp)) {
                 Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(150.dp),
+                    modifier = Modifier.requiredHeight(150.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Image(
-                        modifier = Modifier.size(150.dp),
+                        modifier = Modifier.fillMaxWidth(),
                         painter = painterResource(id = R.drawable.logo),
                         contentDescription = "Logo Image"
                     )
@@ -118,7 +113,10 @@ fun NavigationDrawer(
                 NavigationDrawerItem(
                     label = {
                         Row(modifier = Modifier.padding(12.dp)) {
-                            Image(painter = painterResource(R.drawable.google_logo), contentDescription = "Google Logo")
+                            Image(
+                                painter = painterResource(R.drawable.google_logo),
+                                contentDescription = "Google Logo"
+                            )
                             Spacer(modifier = Modifier.width(12.dp))
                             Text(
                                 text = "Sign out",
@@ -135,3 +133,4 @@ fun NavigationDrawer(
         content = content
     )
 }
+

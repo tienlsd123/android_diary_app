@@ -18,7 +18,7 @@ import java.time.ZoneId
 object MongoDB : MongoRepository {
 
     private val app = App.create(Constants.APP_ID)
-    private val user = app.currentUser
+    private var user = app.currentUser
     private lateinit var realm: Realm
 
     init {
@@ -26,8 +26,9 @@ object MongoDB : MongoRepository {
     }
 
     override fun configureTheRealm() {
-        if (user != null) {
-            val config = SyncConfiguration.Builder(user, setOf(Diary::class))
+        user = app.currentUser
+        user?.let {
+            val config = SyncConfiguration.Builder(it, setOf(Diary::class))
                 .log(LogLevel.DEBUG)
                 .initialSubscriptions { realm ->
                     add(realm.query<Diary>(), "sync subscription")
@@ -37,6 +38,7 @@ object MongoDB : MongoRepository {
     }
 
     override fun getAllDiaries(): Flow<Diaries> {
+        user = app.currentUser
         return if (user != null) {
             try {
                 realm.query<Diary>().sort(property = "date", sortOrder = Sort.DESCENDING).asFlow().map { result ->

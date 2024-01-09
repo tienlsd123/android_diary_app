@@ -70,7 +70,9 @@ fun NavGraphBuilder.authenticationRoute(navigateToHome: () -> Unit) {
             onTokenIdReceived = { tokenId ->
                 authVieModel.signWithMongoAtlas(
                     tokenId = tokenId,
-                    onSuccess = { messageBarState.addSuccess("Successfully Authenticated") },
+                    onSuccess = {
+                        messageBarState.addSuccess("Successfully Authenticated")
+                    },
                     onError = { messageBarState.addError(it) }
                 )
             },

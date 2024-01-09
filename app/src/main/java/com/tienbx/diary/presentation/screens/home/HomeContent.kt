@@ -42,12 +42,8 @@ fun HomeContent(
             modifier = Modifier
                 .padding(horizontal = 24.dp)
                 .navigationBarsPadding()
-                .padding(
-                    top = paddingValues.calculateTopPadding(),
-                    bottom = paddingValues.calculateBottomPadding(),
-                    start = paddingValues.calculateStartPadding(LayoutDirection.Ltr),
-                    end = paddingValues.calculateEndPadding(LayoutDirection.Ltr)
-                )
+                .padding(top = paddingValues.calculateTopPadding())
+                .navigationBarsPadding()
         ) {
             diariesNotes.forEach { (localDate, diaries) ->
                 stickyHeader(key = localDate) {
@@ -69,6 +65,7 @@ fun HomeContent(
 
 @Composable
 fun DateHeader(localDate: LocalDate) {
+
     Row(
         modifier = Modifier
             .fillMaxWidth()

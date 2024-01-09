@@ -61,7 +61,7 @@ fun DiaryHolder(
         modifier = Modifier.clickable(
             indication = null,
             interactionSource = remember { MutableInteractionSource() },
-            onClick = { onclick(diary._id.toString()) }
+            onClick = { onclick(diary._id.toHexString()) }
         )
     ) {
         Spacer(modifier = Modifier.width(14.dp))

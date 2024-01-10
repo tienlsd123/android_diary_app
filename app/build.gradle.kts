@@ -5,7 +5,7 @@ plugins {
     id("dagger.hilt.android.plugin")
     id("io.realm.kotlin")
     id("com.google.devtools.ksp")
-//    id("com.google.gms.google-services")
+    id("com.google.gms.google-services")
 }
 
 android {

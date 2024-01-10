@@ -1,5 +1,6 @@
 package com.tienbx.diary.presentation.screens.write
 
+import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
@@ -40,20 +41,27 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.tienbx.diary.model.Diary
+import com.tienbx.diary.model.GalleryImage
+import com.tienbx.diary.model.GalleryState
 import com.tienbx.diary.model.Mood
+import com.tienbx.diary.presentation.component.GalleryUploader
+import io.realm.kotlin.ext.toRealmList
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun WriteContent(
     uiState: WriteUiState,
+    galleryState: GalleryState,
     paddingValues: PaddingValues,
     title: String,
     description: String,
     onTitleChanged: (String) -> Unit,
     onDescriptionChanged: (String) -> Unit,
     pagerState: PagerState,
-    onSaveClicked: (Diary) -> Unit
+    onSaveClicked: (Diary) -> Unit,
+    onImageSelect: (Uri) -> Unit,
+    onImageClicked: (GalleryImage) -> Unit
 ) {
     val scrollState = rememberScrollState()
     val context = LocalContext.current
@@ -159,6 +167,13 @@ fun WriteContent(
             verticalArrangement = Arrangement.Bottom,
             content = {
                 Spacer(modifier = Modifier.height(12.dp))
+                GalleryUploader(
+                    galleryState = galleryState,
+                    onAddClicked = {focusManager.clearFocus()},
+                    onImageSelect = onImageSelect,
+                    onImageClicked = onImageClicked
+                )
+                Spacer(modifier = Modifier.height(12.dp))
                 Button(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -170,6 +185,7 @@ fun WriteContent(
                                 Diary().apply {
                                     this.title = uiState.title
                                     this.description = uiState.description
+                                    this.images = galleryState.images.map { it.remoteImagePath }.toRealmList()
                                 }
                             )
                         } else {

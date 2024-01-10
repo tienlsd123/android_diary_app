@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "105564355010",
+    "project_id": "diaryapplication-408109",
+    "storage_bucket": "diaryapplication-408109.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:105564355010:android:c3a9ff77e76031376efe5b",
+        "android_client_info": {
+          "package_name": "com.tienbx.diary"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "105564355010-fr29e8i34e4a8bpe7eg67d3l0mv4sdih.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA3LPkxVp4KBouOXiuAR-QNyJKNa4iQcWY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "105564355010-fr29e8i34e4a8bpe7eg67d3l0mv4sdih.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

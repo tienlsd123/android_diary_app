@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DrawerState
@@ -33,6 +34,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.LayoutDirection
@@ -40,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import com.tienbx.diary.R
 import com.tienbx.diary.data.repository.Diaries
 import com.tienbx.diary.util.RequestState
+import java.time.ZonedDateTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -50,21 +53,31 @@ fun HomeScreen(
     onMenuClicked: () -> Unit,
     onSignOutClicked: () -> Unit,
     navigateToWrite: () -> Unit,
+    onDeleteAllClicked: () -> Unit,
     navigateWriteWithArgs: (String) -> Unit,
+    dateIsSelected: Boolean,
+    onDateSelected: (ZonedDateTime) -> Unit,
+    onDateReset: () -> Unit
 ) {
     var padding by remember { mutableStateOf(PaddingValues()) }
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
     NavigationDrawer(
         drawerState = drawerState,
-        onSignOutClicked = onSignOutClicked
+        onSignOutClicked = onSignOutClicked,
+        onDeleteAllClicked = onDeleteAllClicked
     ) {
         Scaffold(
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            topBar = { HomeTopBar(
-                scrollBehavior = scrollBehavior,
-                onMenuClicked = onMenuClicked
-            ) },
+            topBar = {
+                HomeTopBar(
+                    scrollBehavior = scrollBehavior,
+                    onMenuClicked = onMenuClicked,
+                    dateIsSelected = dateIsSelected,
+                    onDateReset = onDateReset,
+                    onDateSelected = onDateSelected
+                )
+            },
             floatingActionButton = {
                 FloatingActionButton(
                     modifier = Modifier.padding(end = padding.calculateEndPadding(LayoutDirection.Ltr)),
@@ -105,6 +118,7 @@ fun HomeScreen(
 fun NavigationDrawer(
     drawerState: DrawerState,
     onSignOutClicked: () -> Unit,
+    onDeleteAllClicked: () -> Unit,
     content: @Composable () -> Unit
 ) {
     ModalNavigationDrawer(
@@ -117,15 +131,16 @@ fun NavigationDrawer(
                     Image(
                         modifier = Modifier.fillMaxWidth(),
                         painter = painterResource(id = R.drawable.logo),
-                        contentDescription = "Logo Image"
+                        contentDescription = "Logo Image",
                     )
                 }
                 NavigationDrawerItem(
                     label = {
                         Row(modifier = Modifier.padding(12.dp)) {
-                            Image(
+                            Icon(
                                 painter = painterResource(R.drawable.google_logo),
-                                contentDescription = "Google Logo"
+                                contentDescription = "Google Logo",
+                                tint = MaterialTheme.colorScheme.onSurface
                             )
                             Spacer(modifier = Modifier.width(12.dp))
                             Text(
@@ -136,6 +151,25 @@ fun NavigationDrawer(
                     },
                     selected = false,
                     onClick = onSignOutClicked
+                )
+
+                NavigationDrawerItem(
+                    label = {
+                        Row(modifier = Modifier.padding(12.dp)) {
+                            Icon(
+                                imageVector = Icons.Default.Delete,
+                                contentDescription = "Delete All Icon",
+                                tint = MaterialTheme.colorScheme.onSurface
+                            )
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Text(
+                                text = "Delete All Diaries",
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                        }
+                    },
+                    selected = false,
+                    onClick = onDeleteAllClicked
                 )
             }
         },

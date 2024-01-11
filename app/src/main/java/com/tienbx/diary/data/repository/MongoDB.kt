@@ -1,5 +1,6 @@
 package com.tienbx.diary.data.repository
 
+import android.util.Log
 import com.tienbx.diary.model.Diary
 import com.tienbx.diary.util.Constants
 import com.tienbx.diary.util.RequestState
@@ -10,11 +11,15 @@ import io.realm.kotlin.log.LogLevel
 import io.realm.kotlin.mongodb.App
 import io.realm.kotlin.mongodb.sync.SyncConfiguration
 import io.realm.kotlin.query.Sort
+import io.realm.kotlin.types.RealmInstant
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import org.mongodb.kbson.BsonObjectId
+import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.ZoneId
+import java.time.ZonedDateTime
 
 object MongoDB : MongoRepository {
 
@@ -62,6 +67,36 @@ object MongoDB : MongoRepository {
             try {
                 realm.query<Diary>(query = "_id == $0", diaryId).asFlow().map {
                     RequestState.Success(data = it.list.first())
+                }
+            } catch (e: Exception) {
+                flow { emit(RequestState.Error(e)) }
+            }
+        } else {
+            flow { emit(RequestState.Error(UserNotAuthenticatedException())) }
+        }
+    }
+
+    override fun getFilteredDiaries(zonedDateTime: ZonedDateTime): Flow<Diaries> {
+        user = app.currentUser
+        return if (user != null) {
+            try {
+                val endDate = RealmInstant.from(
+                    LocalDateTime.of(zonedDateTime.toLocalDate().plusDays(1), LocalTime.MIDNIGHT)
+                        .toEpochSecond(zonedDateTime.offset), 0
+                )
+
+                val startDate = RealmInstant.from(
+                    LocalDateTime.of(zonedDateTime.toLocalDate(), LocalTime.MIDNIGHT)
+                        .toEpochSecond(zonedDateTime.offset), 0
+                )
+                realm.query<Diary>(query = "date > $0 AND date < $1", startDate, endDate).asFlow().map { result ->
+                    RequestState.Success(
+                        data = result.list.groupBy {
+                            it.date.toInstance()
+                                .atZone(ZoneId.systemDefault())
+                                .toLocalDate()
+                        }
+                    )
                 }
             } catch (e: Exception) {
                 flow { emit(RequestState.Error(e)) }
@@ -123,6 +158,23 @@ object MongoDB : MongoRepository {
                 } else {
                     RequestState.Error(Exception("Diary does not exist."))
 
+                }
+            }
+        } else {
+            RequestState.Error(UserNotAuthenticatedException())
+        }
+    }
+
+    override suspend fun deleteAllDiaries(): RequestState<Boolean> {
+        user = app.currentUser
+        return if (user != null) {
+            realm.write {
+                val diaries = query<Diary>(query = "ownerId == $0", user!!.id).find()
+                try {
+                    delete(diaries)
+                    RequestState.Success(data = true)
+                } catch (e: Exception) {
+                    RequestState.Error(e)
                 }
             }
         } else {

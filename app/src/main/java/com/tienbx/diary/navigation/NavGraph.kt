@@ -64,13 +64,12 @@ fun SetupNavGraph(startDestination: String, navHostController: NavHostController
 
 fun NavGraphBuilder.authenticationRoute(navigateToHome: () -> Unit) {
     composable(route = Screen.Authentication.route) {
-        val authVieModel: AuthenticationViewModel = viewModel()
+        val authVieModel: AuthenticationViewModel = hiltViewModel()
         val loadingState by authVieModel.loadingState
         val authenticated = authVieModel.authenticated.value
 
         val oneTapSignInState = rememberOneTapSignInState()
         val messageBarState = rememberMessageBarState()
-
 
         AuthenticationScreen(
             loadingState = loadingState,
@@ -109,11 +108,14 @@ fun NavGraphBuilder.homeRoute(
     navigateToAuth: () -> Unit
 ) {
     composable(route = Screen.Home.route) {
-        val viewModel: HomeViewModel = viewModel()
+        val viewModel: HomeViewModel = hiltViewModel()
         val diaries by viewModel.diaries
         var signOutDialogOpened by remember { mutableStateOf(false) }
         val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
         val scope = rememberCoroutineScope()
+        var deleteAllDialogOpened by remember { mutableStateOf(false) }
+        val context = LocalContext.current
+
         HomeScreen(
             diaries = diaries,
             drawerState = drawerState,
@@ -124,7 +126,16 @@ fun NavGraphBuilder.homeRoute(
             },
             onSignOutClicked = { signOutDialogOpened = true },
             navigateToWrite = navigateToWrite,
-            navigateWriteWithArgs = navigateWriteWithArgs
+            navigateWriteWithArgs = navigateWriteWithArgs,
+            onDeleteAllClicked = {
+                deleteAllDialogOpened = true
+            },
+            dateIsSelected = viewModel.dateIsSelected,
+            onDateSelected = {
+                viewModel.getDiaries(zonedDateTime = it)
+            },
+            onDateReset = {viewModel.getDiaries()}
+
         )
 
         DisplayAlertDialog(
@@ -142,6 +153,27 @@ fun NavGraphBuilder.homeRoute(
                         }
                     }
                 }
+            }
+        )
+
+        DisplayAlertDialog(
+            title = "Delete All Diaries",
+            msg = "Are you sure you want to permanently delete all your diaries?",
+            dialogOpened = deleteAllDialogOpened,
+            onCloseDialog = { deleteAllDialogOpened = false },
+            onYesClicked = {
+                viewModel.deleteAllDiaries(
+                    onSuccess = {
+                        Toast.makeText(context, "All Diaries Deleted.", Toast.LENGTH_SHORT).show()
+                        scope.launch { drawerState.close() }
+                    },
+                    onError = {
+                        val msg =
+                            if (it.message == "No Internet Connection") "We need an Internet Connection for this operation" else it.message
+                        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+                        scope.launch { drawerState.close() }
+                    }
+                )
             }
         )
     }

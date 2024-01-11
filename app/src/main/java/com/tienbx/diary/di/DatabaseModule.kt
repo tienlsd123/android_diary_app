@@ -2,6 +2,8 @@ package com.tienbx.diary.di
 
 import android.content.Context
 import androidx.room.Room
+import com.tienbx.diary.connectivity.ConnectivityObserver
+import com.tienbx.diary.connectivity.NetworkConnectivityObserve
 import com.tienbx.diary.data.database.ImagesDatabase
 import com.tienbx.diary.util.Constants
 import dagger.Module
@@ -30,4 +32,10 @@ object DatabaseModule {
     @Provides
     @Singleton
     fun provideImageToDeleteDao(database: ImagesDatabase) = database.imageToDeleteDao()
+
+    @Provides
+    @Singleton
+    fun provideNetworkConnectivityObserve(
+        @ApplicationContext context: Context
+    ): ConnectivityObserver = NetworkConnectivityObserve(context)
 }

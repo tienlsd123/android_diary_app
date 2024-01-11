@@ -74,7 +74,7 @@ private fun cleanupCheck(
             retryDeletingImageFromFirebase(
                 imageToDelete = image,
                 onSuccess = {
-
+                    scope.launch(Dispatchers.IO) { imagesToDeleteDao.cleanupImage(image) }
                 }
             )
         }

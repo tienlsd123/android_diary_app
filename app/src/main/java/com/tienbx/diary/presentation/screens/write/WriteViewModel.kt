@@ -46,9 +46,16 @@ class WriteViewModel @Inject constructor(
     var uiState by mutableStateOf(WriteUiState())
         private set
 
+    var isAuthor by mutableStateOf(false)
+        private set
+
     init {
         getDiaryIdArgument()
         fetchSelectedDiary()
+    }
+
+    private fun checkAuthorPermission(ownerId: String) {
+        isAuthor = MongoDB.checkAuthorPermission(ownerId)
     }
 
     private fun getDiaryIdArgument() {
@@ -69,6 +76,7 @@ class WriteViewModel @Inject constructor(
                         withContext(Dispatchers.Main) {
                             val data = response.data
                             setSelectedDiary(data)
+                            checkAuthorPermission(data.ownerId)
                             setDescription(data.description)
                             setTitle(data.title)
                             setMood(Mood.valueOf(data.mood))
@@ -91,10 +99,12 @@ class WriteViewModel @Inject constructor(
                 }
 
             }
+        } else {
+            isAuthor = true
         }
     }
 
-    fun setMood(value: Mood) {
+    private fun setMood(value: Mood) {
         uiState = uiState.copy(mood = value)
     }
 

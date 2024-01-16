@@ -134,7 +134,7 @@ fun NavGraphBuilder.homeRoute(
             onDateSelected = {
                 viewModel.getDiaries(zonedDateTime = it)
             },
-            onDateReset = {viewModel.getDiaries()}
+            onDateReset = { viewModel.getDiaries() }
 
         )
 
@@ -190,6 +190,7 @@ fun NavGraphBuilder.writeRoute(
     })) {
         val viewModel: WriteViewModel = hiltViewModel()
         val uiState = viewModel.uiState
+        val isAuthor = viewModel.isAuthor
         val pagerState = rememberPagerState { Mood.values().size }
 
         val galleryState = viewModel.galleryState
@@ -197,6 +198,7 @@ fun NavGraphBuilder.writeRoute(
         val context = LocalContext.current
         WriteScreen(
             uiState = uiState,
+            isAuthor = isAuthor,
             pagerState = pagerState,
             galleryState = galleryState,
             moodName = { Mood.values()[pageNumber].name },

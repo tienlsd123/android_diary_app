@@ -3,6 +3,7 @@ package com.tienbx.diary.presentation.screens.write
 import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,6 +19,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -52,6 +54,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun WriteContent(
     uiState: WriteUiState,
+    isAuthor: Boolean = false,
     galleryState: GalleryState,
     paddingValues: PaddingValues,
     title: String,
@@ -91,7 +94,10 @@ fun WriteContent(
                 .verticalScroll(scrollState),
             content = {
                 Spacer(modifier = Modifier.height(30.dp))
-                HorizontalPager(state = pagerState) { page ->
+                HorizontalPager(
+                    state = pagerState,
+                    userScrollEnabled = isAuthor
+                ) { page ->
                     val mood = Mood.values()[page]
                     Box(
                         modifier = Modifier.fillMaxWidth(),
@@ -112,7 +118,9 @@ fun WriteContent(
                 TextField(
                     modifier = Modifier.fillMaxWidth(),
                     value = title,
+                    enabled = isAuthor,
                     onValueChange = onTitleChanged,
+                    shape = Shapes().small,
                     placeholder = { Text(text = "Title") },
                     colors = TextFieldDefaults.colors(
                         focusedContainerColor = Color.Transparent,
@@ -137,10 +145,15 @@ fun WriteContent(
                     maxLines = 1,
                     singleLine = true
                 )
+
+                Spacer(modifier = Modifier.height(5.dp))
+
                 TextField(
                     modifier = Modifier.fillMaxWidth(),
                     value = description,
                     onValueChange = onDescriptionChanged,
+                    shape = Shapes().small,
+                    enabled = isAuthor,
                     placeholder = { Text(text = "Tell me about it.") },
                     colors = TextFieldDefaults.colors(
                         focusedContainerColor = Color.Transparent,
@@ -168,12 +181,14 @@ fun WriteContent(
             content = {
                 Spacer(modifier = Modifier.height(12.dp))
                 GalleryUploader(
+                    isAuthor = isAuthor,
                     galleryState = galleryState,
-                    onAddClicked = {focusManager.clearFocus()},
+                    onAddClicked = { focusManager.clearFocus() },
                     onImageSelect = onImageSelect,
                     onImageClicked = onImageClicked
                 )
                 Spacer(modifier = Modifier.height(12.dp))
+                if (!isAuthor) return@Column
                 Button(
                     modifier = Modifier
                         .fillMaxWidth()

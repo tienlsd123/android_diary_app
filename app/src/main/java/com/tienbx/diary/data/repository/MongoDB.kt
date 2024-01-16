@@ -1,6 +1,5 @@
 package com.tienbx.diary.data.repository
 
-import android.util.Log
 import com.tienbx.diary.model.Diary
 import com.tienbx.diary.util.Constants
 import com.tienbx.diary.util.RequestState
@@ -41,6 +40,13 @@ object MongoDB : MongoRepository {
                 }.build()
             realm = Realm.open(config)
         }
+    }
+
+    override fun checkAuthorPermission(ownerId: String): Boolean {
+        user = app.currentUser
+        return if (user != null) {
+            user!!.id == ownerId
+        } else false
     }
 
     override fun getAllDiaries(): Flow<Diaries> {

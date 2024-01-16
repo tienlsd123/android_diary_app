@@ -48,6 +48,7 @@ import java.util.Locale
 @Composable
 fun WriteTopBar(
     selectedDiary: Diary?,
+    isAuthor: Boolean = false,
     onBackPressed: () -> Unit,
     moodName: () -> String,
     onDeleteConfirmed: () -> Unit,
@@ -112,6 +113,7 @@ fun WriteTopBar(
             }
         },
         actions = {
+            if (!isAuthor) return@CenterAlignedTopAppBar
             if (dateTimeUpdated) {
                 IconButton(onClick = {
                     currentDate = LocalDate.now()

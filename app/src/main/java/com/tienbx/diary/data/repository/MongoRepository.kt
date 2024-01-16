@@ -11,6 +11,7 @@ typealias Diaries = RequestState<Map<LocalDate, List<Diary>>>
 
 interface MongoRepository {
     fun configureTheRealm()
+    fun checkAuthorPermission(ownerId: String) : Boolean
     fun getAllDiaries(): Flow<Diaries>
     fun getSelectedDiary(diaryId: BsonObjectId): Flow<RequestState<Diary>>
     fun getFilteredDiaries(zonedDateTime: ZonedDateTime): Flow<Diaries>

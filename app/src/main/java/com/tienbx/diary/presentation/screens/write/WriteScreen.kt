@@ -44,6 +44,7 @@ import java.time.ZonedDateTime
 @Composable
 fun WriteScreen(
     uiState: WriteUiState,
+    isAuthor: Boolean,
     pagerState: PagerState,
     galleryState: GalleryState,
     onBackPressed: () -> Unit,
@@ -68,6 +69,7 @@ fun WriteScreen(
     Scaffold(
         topBar = {
             WriteTopBar(
+                isAuthor = isAuthor,
                 selectedDiary = uiState.selectedDiary,
                 onBackPressed = onBackPressed,
                 onDeleteConfirmed = onDeleteConfirmed,
@@ -77,6 +79,7 @@ fun WriteScreen(
         },
         content = { padding ->
             WriteContent(
+                isAuthor = isAuthor,
                 uiState = uiState,
                 galleryState = galleryState,
                 paddingValues = padding,
@@ -96,6 +99,7 @@ fun WriteScreen(
                 Dialog(onDismissRequest = { selectedGalleryImage = null }) {
                     selectedGalleryImage?.let {
                         ZoomableImage(
+                            isAuthor = isAuthor,
                             selectedGalleryImage = selectedGalleryImage!!,
                             onCloseClicked = {
                                 selectedGalleryImage = null
@@ -116,6 +120,7 @@ fun WriteScreen(
 
 @Composable
 fun ZoomableImage(
+    isAuthor: Boolean,
     selectedGalleryImage: GalleryImage,
     onCloseClicked: () -> Unit,
     onDeleteClicked: () -> Unit
@@ -165,9 +170,11 @@ fun ZoomableImage(
                 Icon(imageVector = Icons.Default.Close, contentDescription = "Close Icon")
                 Text(text = "Close")
             }
-            Button(onClick = onDeleteClicked) {
-                Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete Icon")
-                Text(text = "Delete")
+            if (isAuthor) {
+                Button(onClick = onDeleteClicked) {
+                    Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete Icon")
+                    Text(text = "Delete")
+                }
             }
         }
     }

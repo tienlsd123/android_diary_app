@@ -80,6 +80,7 @@ fun Gallery(
 
 @Composable
 fun GalleryUploader(
+    isAuthor: Boolean,
     modifier: Modifier = Modifier,
     galleryState: GalleryState,
     imageSize: Dp = 60.dp,
@@ -97,16 +98,25 @@ fun GalleryUploader(
 
     BoxWithConstraints(modifier = modifier) {
         val numberOfVisibleImages = remember {
-            derivedStateOf { max(a = 0, b = this.maxWidth.div(spaceBetween + imageSize).toInt().minus(2)) }
+            derivedStateOf {
+                max(
+                    a = 0, b = this.maxWidth.div(spaceBetween + imageSize).toInt().minus(
+                        if (isAuthor) 2 else 1
+                    )
+                )
+            }
         }
         val remainingImages = remember { derivedStateOf { galleryState.images.size - numberOfVisibleImages.value } }
         Row {
-            AddImageButton(imageSize = imageSize, imageShape = imageShape) {
-                onAddClicked()
-                multiplePhotoPicker.launch(
-                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                )
+            if (isAuthor) {
+                AddImageButton(imageSize = imageSize, imageShape = imageShape) {
+                    onAddClicked()
+                    multiplePhotoPicker.launch(
+                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                    )
+                }
             }
+
             Spacer(modifier = Modifier.width(spaceBetween))
             galleryState.images.take(numberOfVisibleImages.value).forEach { galleryImage ->
                 AsyncImage(

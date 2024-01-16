@@ -26,8 +26,15 @@ android {
     }
 
     buildTypes {
-        release {
+        debug {
+            isDebuggable = true
+            isShrinkResources = false
             isMinifyEnabled = false
+        }
+        release {
+            isDebuggable = false
+            isShrinkResources = true
+            isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
@@ -73,7 +80,9 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.7.6")
 
     // Firebase
+    implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
     implementation("com.google.firebase:firebase-auth-ktx:22.3.0")
+    implementation("com.google.android.gms:play-services-auth:20.7.0")
     implementation("com.google.firebase:firebase-storage-ktx:20.3.0")
 
     // Room components
@@ -113,9 +122,6 @@ dependencies {
 
     // Message Bar Compose
     implementation("com.github.stevdza-san:MessageBarCompose:1.0.8")
-
-    // One-Tap Compose
-    implementation("com.github.stevdza-san:OneTapCompose:1.0.9")
 
     // Desugar JDK
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")

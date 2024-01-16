@@ -14,7 +14,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -22,7 +21,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.stevdzasan.messagebar.rememberMessageBarState
-import com.stevdzasan.onetap.rememberOneTapSignInState
 import com.tienbx.diary.model.Mood
 import com.tienbx.diary.presentation.component.DisplayAlertDialog
 import com.tienbx.diary.presentation.screens.auth.AuthenticationScreen
@@ -32,6 +30,7 @@ import com.tienbx.diary.presentation.screens.home.HomeViewModel
 import com.tienbx.diary.presentation.screens.write.WriteScreen
 import com.tienbx.diary.presentation.screens.write.WriteViewModel
 import com.tienbx.diary.util.Constants
+import com.tienbx.diary.util.rememberOneTapSignInState
 import io.realm.kotlin.mongodb.App
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

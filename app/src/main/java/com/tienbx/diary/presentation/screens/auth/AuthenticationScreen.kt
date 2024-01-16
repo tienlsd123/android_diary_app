@@ -13,9 +13,9 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.stevdzasan.messagebar.ContentWithMessageBar
 import com.stevdzasan.messagebar.MessageBarState
-import com.stevdzasan.onetap.OneTapSignInState
-import com.stevdzasan.onetap.OneTapSignInWithGoogle
 import com.tienbx.diary.util.Constants
+import com.tienbx.diary.util.OneTapSignInState
+import com.tienbx.diary.util.OneTapSignInWithGoogle
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
